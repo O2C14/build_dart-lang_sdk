@@ -46,7 +46,7 @@ jobs:
           echo %GYP_MSVS_OVERRIDE_PATH%
           echo %WINDOWSSDKDIR%
           cd sdk
-          python3 .\tools\build.py --no-goma --mode release --arch x64 create_sdk
+          .\tools\build.py --no-goma --mode release --arch x64 create_sdk
       - name: Package sdk as zip file
         run: |
           cd .\sdk\out
