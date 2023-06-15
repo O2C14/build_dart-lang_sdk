@@ -14,13 +14,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Install tools
         run: |
+          [Environment]::SetEnvironmentVariable("DEPOT_TOOLS_WIN_TOOLCHAIN","0","Machine")
+          [Environment]::SetEnvironmentVariable("GYP_MSVS_OVERRIDE_PATH","C:\Program Files (x86)\Microsoft Visual Studio\2019\Community","Machine")
+          [Environment]::SetEnvironmentVariable("WINDOWSSDKDIR","C:\Program Files (x86)\Windows Kits\10\","Machine")
           choco upgrade -y openssl.light
           choco install  -y visualstudio2019community
           choco install visualstudio2019buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.Windows10SDK.19041"
           choco install -y python2.7 zip git python3 ninja
-          $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
-          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
-          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
           pip3 install .
           git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Force
