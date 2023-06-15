@@ -50,9 +50,10 @@ jobs:
       - name: Package sdk as zip file
         run: |
           cd sdk
-          Compress-Archive -Path win_release_x64 -DestinationPath sdk.zip
+          cd out
+          Compress-Archive -Path win_release_x64 -DestinationPath out.zip
       - name: Upload engine zip file as artifact
         uses: actions/upload-artifact@v2
         with:
           name: sdk
-          path: $ROOT_DIR\sdk\sdk.zip
+          path: $ROOT_DIR\sdk\out\out.zip
