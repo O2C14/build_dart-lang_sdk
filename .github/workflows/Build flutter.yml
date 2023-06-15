@@ -14,16 +14,19 @@ jobs:
         run: |
           choco upgrade -y openssl.light
           choco install  -y visualstudio2022community
-          choco install visualstudio2022buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.DiaSDK --add Microsoft.VisualStudio.Component.Windows11SDK.22000"
+          choco install visualstudio2022buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools"
+          choco install -y windows-sdk-11-version-21h2-all
           choco install -y zip git python3 ninja
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
           $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
-          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
+          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\11\"
           pip3 install wheel reflutter
           pip3 install .
           cd c:/
           git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
           git clone https://github.com/flutter/engine.git
+          git clone https://github.com/O2C14/build_dart-lang_sdk.git
+          Expand-Archive -Path "C:\build_dart-lang_sdk\DIA SDK.zip" -DestinationPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community\DIA SDK\" -Force
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Force
       - name: Sync engine code and dependencies
         run: |
@@ -32,7 +35,7 @@ jobs:
           $env:PATH = "$env:PATH;$ROOT_DIR\depot_tools"
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
           $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
-          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
+          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\11\"
           cd engine
           git checkout 3.7.8
           git reset --hard FETCH_HEAD
@@ -45,7 +48,7 @@ jobs:
         run: |
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
           $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
-          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
+          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\11\"
           cd c:\customEngine\src\flutter
           .\tools\gn --no-goma --windows --runtime-mode=release
           ninja -C .\customEngine\src\out\win_release_x64 flutter_assemble
