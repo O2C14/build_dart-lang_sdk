@@ -46,13 +46,13 @@ jobs:
           echo %GYP_MSVS_OVERRIDE_PATH%
           echo %WINDOWSSDKDIR%
           cd sdk
-          .\tools\build.py --no-goma --mode release --arch x64 create_sdk
+          python .\tools\build.py --no-goma --mode release --arch x64 create_sdk
       - name: Package sdk as zip file
         run: |
-          cd .\sdk\out
+          cd sdk
           Compress-Archive -Path win_release_x64 -DestinationPath sdk.zip
       - name: Upload engine zip file as artifact
         uses: actions/upload-artifact@v2
         with:
           name: sdk
-          path: $ROOT_DIR\sdk\out\sdk.zip
+          path: $ROOT_DIR\sdk\sdk.zip
