@@ -29,13 +29,22 @@ jobs:
           $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
           $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
           fetch dart
+          Get-Volume | Select-Object DriveLetter, FileSystemLabel, @{label="TotalSize(GB)";Expression={"{0:N2}" -f ($_.Size/1GB)}}, @{label="FreeSpace(GB)";Expression={"{0:N2}" -f ($_.SizeRemaining/1GB)}}
       - name: Build engine
         shell: cmd
         run: |
-          setx PATH "%PATH%;D:\a\build_dart-lang_sdk\build_dart-lang_sdk\depot_tools"
-          setx DEPOT_TOOLS_WIN_TOOLCHAIN 0
-          setx GYP_MSVS_OVERRIDE_PATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
-          setx WINDOWSSDKDIR "C:\Program Files (x86)\Windows Kits\10\"
+          setx PATH "%PATH%;D:\a\build_dart-lang_sdk\build_dart-lang_sdk\depot_tools" /M
+          setx DEPOT_TOOLS_WIN_TOOLCHAIN 0 /M
+          setx GYP_MSVS_OVERRIDE_PATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" /M
+          setx WINDOWSSDKDIR "C:\Program Files (x86)\Windows Kits\10\" /M
+          set PATH="%PATH%;D:\a\build_dart-lang_sdk\build_dart-lang_sdk\depot_tools"
+          set DEPOT_TOOLS_WIN_TOOLCHAIN=0
+          set GYP_MSVS_OVERRIDE_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
+          set WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
+          echo %PATH%
+          echo %DEPOT_TOOLS_WIN_TOOLCHAIN%
+          echo %GYP_MSVS_OVERRIDE_PATH%
+          echo %WINDOWSSDKDIR%
           cd sdk
           python3 .\tools\build.py --no-goma --mode release --arch x64 create_sdk
       - name: Package sdk as zip file
