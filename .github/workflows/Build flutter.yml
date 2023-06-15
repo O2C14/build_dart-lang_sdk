@@ -13,11 +13,11 @@ jobs:
       - name: Install tools
         run: |
           choco upgrade -y openssl.light
-          choco install  -y visualstudio2019community
-          choco install visualstudio2019buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.Windows10SDK.19041"
+          choco install  -y visualstudio2022community
+          choco install visualstudio2022buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.Windows11SDK.22000"
           choco install -y zip git python3 ninja
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
-          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
+          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
           $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
           pip3 install wheel reflutter
           pip3 install .
@@ -31,7 +31,7 @@ jobs:
           $ROOT_DIR = (Get-Location).Path
           $env:PATH = "$env:PATH;$ROOT_DIR\depot_tools"
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
-          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
+          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
           $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
           cd engine
           git checkout 3.7.8
@@ -44,7 +44,7 @@ jobs:
       - name: Build engine
         run: |
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
-          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
+          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
           $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
           cd c:\customEngine\src\flutter
           .\tools\gn --no-goma --windows --runtime-mode=release
