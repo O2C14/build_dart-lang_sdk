@@ -21,31 +21,40 @@ jobs:
           $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
           pip3 install wheel reflutter
           pip3 install .
+          cd c:/
           git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
           git clone https://github.com/flutter/engine.git
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Force
       - name: Sync engine code and dependencies
         run: |
+          cd c:\
           $ROOT_DIR = (Get-Location).Path
           $env:PATH = "$env:PATH;$ROOT_DIR\depot_tools"
+          $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
+          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
+          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
           cd engine
           git checkout 3.7.8
           git reset --hard FETCH_HEAD
           cd $ROOT_DIR
           mkdir customEngine
           cd customEngine
-          echo 'solutions = [{"managed": False,"name": "src\\flutter","url": "D:\\a\\build_dart-lang_sdk\\build_dart-lang_sdk\\engine","custom_deps": {},"deps_file": "DEPS","safesync_url": "",},]' | Out-File -FilePath .gclient -NoNewline -Encoding ASCII
+          echo 'solutions = [{"managed": False,"name": "src\\flutter","url": "C:\\engine","custom_deps": {},"deps_file": "DEPS","safesync_url": "",},]' | Out-File -FilePath .gclient -NoNewline -Encoding ASCII
           gclient sync
       - name: Build engine
         run: |
-          .\customEngine\src\flutter\tools\gn --no-goma --windows --runtime-mode=release
+          $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
+          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
+          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
+          cd c:\customEngine\src\flutter
+          .\tools\gn --no-goma --windows --runtime-mode=release
           ninja -C .\customEngine\src\out\win_release_x64 flutter_assemble
       - name: Package engine as zip file
         run: |
-          cd engine/src/out/
+          cd c:\customEngine\src\out\
           Compress-Archive -Path win_release_x64 -DestinationPath engine.zip
       - name: Upload engine zip file as artifact
         uses: actions/upload-artifact@v2
         with:
           name: engine
-          path: customEngine/src/out/engine.zip
+          path: c:/customEngine/src/out/engine.zip
