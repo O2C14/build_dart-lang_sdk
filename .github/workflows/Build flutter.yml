@@ -13,9 +13,9 @@ jobs:
       - name: Install tools
         run: |
           choco upgrade -y openssl.light
-          choco install  -y visualstudio2022community
-          choco install visualstudio2022buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools"
-          choco install -y windows-sdk-11-version-21h2-all
+          choco install -y visualstudio2022community
+          choco install -y visualstudio2022buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools"
+          choco install -y windows-sdk-11-version-22h2-all
           choco install -y zip git python3 ninja
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
           $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
