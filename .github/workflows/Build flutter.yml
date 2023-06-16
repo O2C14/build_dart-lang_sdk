@@ -53,8 +53,8 @@ jobs:
           $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
           $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\11\"
           cd c:\customEngine\src\flutter
-          .\tools\gn --no-goma --no-prebuilt-dart-sdk --windows --runtime-mode=release
-          ninja -C .\customEngine\src\out\win_release_x64 flutter_assemble
+          python .\tools\gn --no-goma --no-prebuilt-dart-sdk --windows --runtime-mode=release
+          ninja -C c:\customEngine\src\out\win_release_x64
       - name: Package engine as zip file
         run: |
           cd c:\customEngine\src\out\
