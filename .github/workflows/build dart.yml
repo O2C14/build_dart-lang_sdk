@@ -13,49 +13,49 @@ jobs:
       - name: Install tools
         run: |
           choco upgrade -y openssl.light
-          choco install  -y visualstudio2019community
-          choco install visualstudio2019buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools --add Microsoft.VisualStudio.Component.Windows10SDK.19041"
+          choco install -y visualstudio2022community
+          choco install -y visualstudio2022buildtools --package-parameters "--includeRecommended --add Microsoft.VisualStudio.Component.VC.CoreBuildTools"
+          choco install -y windows-sdk-11-version-22h2-all
           choco install -y zip git python3 ninja python2
           pip3 install .
-          cd c:\
+          cd C:\
           git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          git clone https://github.com/O2C14/build_dart-lang_sdk.git
+          Expand-Archive -Path "C:\build_dart-lang_sdk\DIA SDK.zip" -DestinationPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community\DIA SDK\" -Force
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Force
       - name: Sync engine code and dependencies
         run: |
-          cd c:\
           $ROOT_DIR = (Get-Location).Path
           $env:PATH = "$env:PATH;$ROOT_DIR\depot_tools"
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
-          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
-          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
+          $env:GYP_MSVS_OVERRIDE_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
+          $env:WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\11\"
+          cd C:\
           fetch dart
           Get-Volume | Select-Object DriveLetter, FileSystemLabel, @{label="TotalSize(GB)";Expression={"{0:N2}" -f ($_.Size/1GB)}}, @{label="FreeSpace(GB)";Expression={"{0:N2}" -f ($_.SizeRemaining/1GB)}}
       - name: Build engine
         shell: cmd
         run: |
-          cd c:\
           setx PATH "%PATH%;D:\a\build_dart-lang_sdk\build_dart-lang_sdk\depot_tools" /M
           setx DEPOT_TOOLS_WIN_TOOLCHAIN 0 /M
-          setx GYP_MSVS_OVERRIDE_PATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" /M
-          setx WINDOWSSDKDIR "C:\Program Files (x86)\Windows Kits\10\" /M
+          setx GYP_MSVS_OVERRIDE_PATH "C:\Program Files (x86)\Microsoft Visual Studio\2022\Community" /M
+          setx WINDOWSSDKDIR "C:\Program Files (x86)\Windows Kits\11\" /M
           set PATH="%PATH%;D:\a\build_dart-lang_sdk\build_dart-lang_sdk\depot_tools"
           set DEPOT_TOOLS_WIN_TOOLCHAIN=0
-          set GYP_MSVS_OVERRIDE_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community"
-          set WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\10\"
+          set GYP_MSVS_OVERRIDE_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2022\Community"
+          set WINDOWSSDKDIR="C:\Program Files (x86)\Windows Kits\11\"
           echo %PATH%
           echo %DEPOT_TOOLS_WIN_TOOLCHAIN%
           echo %GYP_MSVS_OVERRIDE_PATH%
           echo %WINDOWSSDKDIR%
-          cd sdk
-          C:\hostedtoolcache\windows\Python\3.9.13\x64\python3.exe .\tools\build.py --no-goma --mode release --arch x64 create_sdk
+          cd C:\sdk
+          C:\hostedtoolcache\windows\Python\3.9.13\x64\python.exe C:\sdk\tools\build.py --no-goma --mode release --arch x64 create_sdk
       - name: Package sdk as zip file
         run: |
-          cd c:\
-          cd sdk
-          cd out
+          cd C:\sdk\out
           Compress-Archive -Path win_release_x64 -DestinationPath out.zip
       - name: Upload engine zip file as artifact
         uses: actions/upload-artifact@v2
         with:
           name: sdk
-          path: c:\sdk\out\out.zip
+          path: C:\sdk\out\out.zip
